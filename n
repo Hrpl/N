@@ -1,0 +1,116 @@
+from PIL import Image
+
+
+
+def selecting_channel(pixel, o, p, chan):
+    """ Выделяет цветовой канал всего картинки или её части"""
+    mash = []
+    for i in range(o):
+        for j in range(p):
+            mash.append((i, j))
+            r, g, b = pixel[i, j]
+            norm = 0.2989 * r + 0.5870 * g + 0.1140 * b
+            if chan == 'r':  # Выделение красного канала
+                if (r - 25 >= g + b) or r > 240 and g > 240 and b > 240:
+                    pixel[i, j] = r, g, b
+                else:
+                    pixel[i, j] = int(norm), int(norm), int(norm)
+            elif chan == 'g':  # Выделение зелёного канала
+                if (g >= r + b - 30) or r > 245 and g > 245 and b > 245:
+                    pixel[i, j] = r, g, b
+                else:
+                    pixel[i, j] = int(norm), int(norm), int(norm)
+            elif chan == 'b':  # Выделение синего канала
+                if (b - 25 >= r + g) or r > 245 and g > 245 and b > 245:
+                    pixel[i, j] = r, g, b
+                else:
+                    pixel[i, j] = int(norm), int(norm), int(norm)
+    return pixel
+                
+
+def main():
+    print('Hi, you are using the color channel selection function')
+    im = Image.open('рябина.jpg')
+    pix = im.load()
+    x, y = im.size
+    # Область фильтра на фото
+    o_x = x
+    p_y = y
+    print('Do you want to change the whole picture or part of it?')
+    print('If you want to change all of them, enter 1, else 0')
+    # Ввод диапазона
+    ans = input()
+    if ans == '0':
+        print('Enter x and y apply the filter in pixels')
+        o_x = int(input())
+        p_y = int(input())
+    elif ans == '1':
+        pass
+    else:
+        print('Try again')
+        flag = True
+        while flag:
+            ans = input()
+            if ans == '0':
+                print('Enter x and y apply the filter in pixels')
+                o_x = int(input())
+                p_y = int(input())
+                flag = False
+            elif ans == '1':
+                flag = False
+                pass
+            else:
+                print('Try again')
+    # Проверка на правильность ввода
+    if o_x < 0 or x - o_x < 0:
+        print('Data entered incorrectly x, try again')
+        f = True
+        while f:
+            o_x = int(input())
+            if o_x < 0 or x - o_x < 0:
+                print('Data entered incorrectly x, try again')
+            else:
+                f = False
+    if p_y < 0 or y - p_y < 0:
+        print('Data entered incorrectly y, try again')
+        fl = True
+        while fl:
+            p_y = int(input())
+            if p_y < 0 or y - p_y < 0:
+                print('Data entered incorrectly y, try again')
+            else:
+                fl = False
+    # Ввод необрабатываемого канала
+    print('Enter the channel name: r, g or b ')
+    channel = input()
+    # Проверка на правильность ввода
+    global cor
+    cor = True
+    if channel == 'r' and cor:
+        cor = False
+    elif channel == 'g' and cor:
+        cor = False
+    elif channel == 'b' and cor:
+        cor = False
+    else:
+        print("You didn't enter the channel name correctly, please try again")
+        f = True
+        while f:
+            channel = input()
+            if channel == 'r' and cor:
+                cor = False
+                f = False
+            elif channel == 'g' and cor:
+                cor = False
+                f = False
+            elif channel == 'b' and cor:
+                cor = False
+                f = False
+            else:
+                print("You didn't enter the channel name correctly, please try again")
+    print('Okay, wait a second, please')
+    selecting_channel(pix, o_x, p_y, channel)
+    im.show()
+
+
+main()
